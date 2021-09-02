@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+	    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+		<title>毕业数据可视化</title>
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" href="css/app.css" />
+	</head>
+	
+	<body class="bg01">
+		<header class="header">
+			<h3>毕业数据可视化</h3>
+		</header>
+		
+		<div class="wrapper">
+			<div class="container-fluid">
+				<div class="row fill-h">
+					<div class="col-lg-3 fill-h">
+						<div class="xpanel-wrapper xpanel-wrapper-2">
+							<div class="xpanel">
+								<!-- 地图飞线 -->
+								<div class="fill-h" id="flyMap"></div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-6 fill-h">
+						<div class="xpanel-wrapper xpanel-wrapper-1">
+							<div class="xpanel">
+								<!-- 地图散点 -->
+								<div class="fill-h" id="scatterMap"></div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 fill-h">
+						<div class="xpanel-wrapper xpanel-wrapper-3">
+							<div class="xpanel">
+								<!-- 省份地图 -->
+								<div class="fill-h" id="provinceMap"></div>
+							</div>
+						</div>
+						<div class="xpanel-wrapper xpanel-wrapper-3">
+							<div class="xpanel">
+								<!-- 城市地图 -->
+								<div class="fill-h" id="cityMap"></div>
+							</div>
+						</div>
+						<div class="xpanel-wrapper xpanel-wrapper-3">
+							<div class="xpanel">
+								<!-- 区县地图 -->
+								<div class="fill-h" id="countyMap"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript" src="js/echarts-3.8.5.min.js"></script>
+		<script type="text/javascript" src="js/echarts-map-world.js"></script>
+		<script type="text/javascript" src="js/echarts-map-china.js"></script>
+		<script type="text/javascript" src="js/echarts-china-provinces/jiangsu.js"></script>
+		<script type="text/javascript" src="js/echarts-china-cities/jiang1_su1_su1_zhou1.js"></script>
+		<script type="text/javascript" src="js/echarts-china-counties/jiang1su1_su1zhou1_kun1shan1shi4.js"></script>
+		<script type="text/javascript">
+			$(function() {
+				/******************* 地图飞线 ******************/
+				//初始化echarts实例
+				const flyMap = echarts.init(document.getElementById("flyMap"));
+		        //城市经纬度
+		        const originName = '岳阳县第一中学';
+		        const flyGeo = {
+		        	'岳阳县第一中学':[113.10, 29.39],'武汉市':[114.31, 30.60],'广州市':[113.26, 23.13],'长沙市':[112.95, 28.24],'北京市':[116.41, 39.91],'长春市':[125.33, 43.82],'株洲市':[113.14, 27.83],'西安市':[108.95, 34.35],'上海市':[121.48, 31.24],'重庆市':[106.56, 29.57],'兰州市':[103.84, 36.07],'成都市':[103.84, 36.07],'无锡市':[120.32, 31.50],'南京市':[120.32, 31.50],'青岛市':[120.40, 36.10],'合肥市':[117.24, 31.83],'成都市':[104.07, 30.58],'衡阳市':[112.58, 26.90],'湘西土家族苗族自治州':[109.75, 28.32],'海口市':[110.20, 20.03],'郑州市':[113.63, 34.75],'南昌市':[115.87, 28.69],'深圳市':[114.07, 22.55],'沈阳市':[123.47, 41.69],'湘潭市':[112.95, 27.84],
+		        };
+		        //飞线数据
+		        var flyVal = [
+		        		[{name:'岳阳县第一中学'}, {name:'岳阳县第一中学', value:57}],[{name:'武汉市'}, {name:'岳阳县第一中学', value:6}],[{name:'广州市'}, {name:'岳阳县第一中学', value:2}],[{name:'长沙市'}, {name:'岳阳县第一中学', value:17}],[{name:'北京市'}, {name:'岳阳县第一中学', value:3}],[{name:'长春市'}, {name:'岳阳县第一中学', value:2}],[{name:'株洲市'}, {name:'岳阳县第一中学', value:1}],[{name:'西安市'}, {name:'岳阳县第一中学', value:3}],[{name:'上海市'}, {name:'岳阳县第一中学', value:3}],[{name:'重庆市'}, {name:'岳阳县第一中学', value:1}],[{name:'兰州市'}, {name:'岳阳县第一中学', value:1}],[{name:'成都市'}, {name:'岳阳县第一中学', value:2}],[{name:'无锡市'}, {name:'岳阳县第一中学', value:1}],[{name:'南京市'}, {name:'岳阳县第一中学', value:5}],[{name:'青岛市'}, {name:'岳阳县第一中学', value:1}],[{name:'合肥市'}, {name:'岳阳县第一中学', value:1}],[{name:'成都市'}, {name:'岳阳县第一中学', value:1}],[{name:'衡阳市'}, {name:'岳阳县第一中学', value:1}],[{name:'湘西土家族苗族自治州'}, {name:'岳阳县第一中学', value:1}],[{name:'海口市'}, {name:'岳阳县第一中学', value:1}],[{name:'郑州市'}, {name:'岳阳县第一中学', value:2}],[{name:'南昌市'}, {name:'岳阳县第一中学', value:1}],[{name:'深圳市'}, {name:'岳阳县第一中学', value:1}],[{name:'沈阳市'}, {name:'岳阳县第一中学', value:1}],[{name:'湘潭市'}, {name:'岳阳县第一中学', value:1}],
+		        ];
+		        //数据转换，转换后格式：[{fromName:'cityName', toName:'cityName', coords:[[lng, lat], [lng, lat]]}, {...}]
+		        const convertFlyData = function(data) {
+		            let res = [];
+		            for(let i=0;i<data.length;i++) {
+		                let dataItem = data[i];
+		                let toCoord = flyGeo[dataItem[0].name];
+		                let fromCoord = flyGeo[dataItem[1].name];
+		                if(fromCoord && toCoord) {
+		                    res.push({
+		                        fromName: dataItem[1].name, 
+		                        toName: dataItem[0].name, 
+		                        coords: [fromCoord, toCoord]
+		                    });
+		                }
+		            }
+		            return res;
+		        };
+		        //报表配置
+		        const flySeries = [];
+		        [[originName, flyVal]].forEach(function(item, i) {
+					flySeries.push({   
+				        name: item[0],
+				        type: 'lines',
+				        zlevel: 1,
+				        symbol: ['none', 'none'],
+				        symbolSize: 0,
+				        effect: { //特效线配置
+				            show: true,
+				            period: 5, //特效动画时间，单位s
+				            trailLength: 0.1, //特效尾迹的长度，从0到1
+				            symbol: 'arrow',
+				            symbolSize: 5
+				        },
+				        lineStyle: {
+				            normal: {
+				                color: '#f19000',
+				                width: 1,
+				                opacity: 0.6,
+				                curveness: 0.2 //线的平滑度
+				            }
+				        },
+				        data: convertFlyData(item[1])
+				    }, {
+				        name: item[0],
+				        type: 'effectScatter',
+				        coordinateSystem: 'geo',
+				        zlevel: 2,
+				        rippleEffect: { //涟漪特效
+				            period: 5, //特效动画时长 
+				            scale: 4, //波纹的最大缩放比例
+				            brushType: 'stroke' //波纹的绘制方式：stroke | fill
+				        },
+				        label: {
+				            normal: {
+				                show: false,
+				                position: 'right',
+				                formatter: '{b}'
+				            }
+				        },
+				        symbol: 'circle',
+				        symbolSize: function (val) {
+				        	//根据某项数据值设置符号大小
+				            return val[2] / 10; 
+				        },
+				        itemStyle: {
+				            normal: {
+				            	color: '#f19000'
+				            }
+				        },
+				        data: item[1].map(function(dataItem) {
+				            return {
+				                name: dataItem[1].name,
+				                value: flyGeo[dataItem[1].name].concat([dataItem[1].value])
+				            };
+				        })
+				    }, { //与上层的点叠加
+				    	name: item[0],
+				        type: 'scatter',
+				        coordinateSystem: 'geo',
+				        zlevel: 3,
+				        symbol: 'circle',
+				        symbolSize: function (val) {
+				        	//根据某项数据值设置符号大小
+				            return val[2] / 15; 
+				        },
+				        itemStyle: {
+				            normal: {
+				            	color: '#f00'
+				            }
+				        },
+				        data: item[1].map(function(dataItem) {
+				            return {
+				                name: dataItem[1].name,
+				                value: flyGeo[dataItem[1].name].concat([dataItem[1].value])
+				            };
+				        })
+				    });
+		        });
+	
+				//报表配置项
+				const flyMapOpt = {
+					title: {
+						show: false,
+						text: '地图飞线',
+						x: 'center',
+						textStyle: {
+							color: '#fff'
+						}
+					},
+	                tooltip: {
+	                    trigger: 'item',
+	                    formatter: function(params) {
+	                        if(params.value) {
+	                            return params.name + ' : ' + params.value[2];
+	                        }else {
+	                            return params.name;
+	                        }
+	                    }
+	                },
+				    geo: {
+				        map: 'china',
+				        roam: false, //开启鼠标缩放和漫游
+				        zoom: 1, //地图缩放级别
+						selectedMode: false, //选中模式：single | multiple
+						left: 0,
+						right: 0,
+						top: 0,
+						bottom: 0,
+						layoutCenter: ['50%', '50%'], //设置后left/right/top/bottom等属性无效
+						layoutSize: '100%', //保持地图宽高比
+				        label: {
+				            emphasis: {
+				                show: false
+				            }
+				        },
+				        itemStyle: {
+				            normal: {
+				                areaColor: '#101f32',
+				                borderWidth: 1.1,
+				                borderColor: '#43d0d6'
+				            },
+				            emphasis: {
+				                areaColor: '#069'
+				            }
+				        }
+				    },
+				    series: flySeries
+				};
+				//渲染报表
+				flyMap.setOption(flyMapOpt);
+				
+				/***************** 地图散点 ******************/
+				//初始化echarts实例
+				const scatterMap = echarts.init(document.getElementById("scatterMap"));
+				//城市经纬度
+				const scatterGeo = {
+					"华中科技大学":[114.42, 30.51],"华南理工大学":[113.35, 23.16],"中南大学":[112.95, 28.15],"中南大学":[112.95, 28.15],"中南大学":[112.95, 28.15],"中南大学":[112.95, 28.15],"北京大学":[116.32, 40.00],"北京大学":[116.32, 40.00],"空军航空大学":[125.33, 43.85],"空军航空大学":[125.33, 43.85],"国防科技大学":[113.01, 28.24],"湖南警察学院":[113.14, 28.23],"湖南工业大学":[113.18, 27.83],"空军工程大学":[109.04, 34.28],"同济大学":[121.51, 31.29],"重庆大学":[106.48, 29.57],"武汉大学":[114.37, 30.53],"南方医科大学":[113.34, 23.19],"兰州大学":[103.86, 36.06],"湖南师范大学":[112.96, 28.19],"四川农业大学":[103.63, 31.01],"江南大学":[120.29, 31.49],"南京邮电大学":[118.94, 32.11],"中南财经政法大学":[114.40, 30.48],"南京航空航天大学":[118.83, 32.04],"中国地质大学":[114.62, 30.46],"河海大学":[118.77, 32.06],"湖南师范大学":[112.96, 28.19],"青岛科技大学":[120.49, 36.13],"南京信息工程大学":[118.73, 32.21],"中南大学":[112.94, 28.16],"南京航空航天大学":[118.83, 32.04],"湖南师范大学":[112.96, 28.19],"中国地质大学":[114.62, 30.46],"西南交通大学":[104.06, 30.70],"合肥工业大学":[117.30, 31.85],"西南交通大学":[104.06, 30.70],"南华大学":[112.60, 26.90],"吉首大学":[109.73, 28.29],"东华大学":[121.36, 31.23],"海南大学":[110.33, 19.99],"河南财经政法大学":[113.67, 34.81],"江西师范大学":[116.04, 28.69],"西安交通大学":[109.01, 34.23],"深圳大学":[113.94, 22.54],"中南林业科技大学":[113.00, 28.14],"华中农业大学":[114.36, 30.48],"西安交通大学":[109.01, 34.23],"湖南大学":[112.95, 28.19],"北京工商大学":[116.74, 39.94],"上海大学":[121.40, 31.33],"郑州大学":[113.65, 34.75],"长沙医学院":[112.88, 28.30],"湖南农业大学":[113.09, 28.19],"东北大学":[123.43, 41.66],"长沙理工大学":[113.02, 28.07],"湘潭大学":[112.87, 27.89],"中南林业科技大学":[113.02, 28.07],"长沙理工大学":[113.02, 28.07],
+				};
+				//城市数据
+				const scatterVal = [
+						{name:"华中科技大学", value:"杨润楷"},{name:"华南理工大学", value:"付宇帆"},{name:"中南大学", value:"张好"},{name:"中南大学", value:"刘诗瑶"},{name:"中南大学", value:"李亦恒"},{name:"中南大学", value:"李嘉俊"},{name:"北京大学", value:"李威"},{name:"北京大学", value:"徐欢"},{name:"空军航空大学", value:"李威"},{name:"空军航空大学", value:"徐欢"},{name:"国防科技大学", value:"赵江伟"},{name:"湖南警察学院", value:"许翱扬"},{name:"湖南工业大学", value:"王薇"},{name:"空军工程大学", value:"许腾"},{name:"同济大学", value:"彭舒凝"},{name:"重庆大学", value:"姜浩"},{name:"武汉大学", value:"黄民梁"},{name:"南方医科大学", value:"陶子翔"},{name:"兰州大学", value:"黄啸"},{name:"湖南师范大学", value:"魏思羽"},{name:"四川农业大学", value:"梁俊杰"},{name:"江南大学", value:"杨天宇"},{name:"南京邮电大学", value:"宋东贤"},{name:"中南财经政法大学", value:"彭紫涵"},{name:"南京航空航天大学", value:"蒋涵"},{name:"中国地质大学", value:"江倩"},{name:"河海大学", value:"任思杨"},{name:"湖南师范大学", value:"赵诗怡"},{name:"青岛科技大学", value:"方清铃"},{name:"南京信息工程大学", value:"张泽栋"},{name:"中南大学", value:"袁雨阳"},{name:"南京航空航天大学", value:"邹增光"},{name:"湖南师范大学", value:"朱天雨"},{name:"中国地质大学", value:"余莹"},{name:"西南交通大学", value:"廖鹏"},{name:"合肥工业大学", value:"任涛"},{name:"西南交通大学", value:"李鑫鑫"},{name:"南华大学", value:"邓强伟"},{name:"吉首大学", value:"李钧"},{name:"东华大学", value:"陈凤仪"},{name:"海南大学", value:"王欣雨"},{name:"河南财经政法大学", value:"方颖"},{name:"江西师范大学", value:"屈文君"},{name:"西安交通大学", value:"杨晨"},{name:"深圳大学", value:"彭文锦"},{name:"中南林业科技大学", value:"朱立强"},{name:"华中农业大学", value:"刘卓舟"},{name:"西安交通大学", value:"敖鑫"},{name:"湖南大学", value:"刘诗怡"},{name:"北京工商大学", value:"李芊"},{name:"上海大学", value:"漆青青"},{name:"郑州大学", value:"刘自强"},{name:"长沙医学院", value:"杨玖奕"},{name:"湖南农业大学", value:"焦方彬"},{name:"东北大学", value:"黎喆"},{name:"长沙理工大学", value:"何思佳"},{name:"湘潭大学", value:"易淑慧"},{name:"中南林业科技大学", value:"晏思羚"},{name:"长沙理工大学", value:"刘家顺"},
+				];
+				//数据转换，转换后的格式：[{name: 'cityName', value: [lng, lat, val]}, {...}]
+				const convertScatterData = function(data) {
+				    let res = [];
+				    for(let i=0;i<data.length;i++) {
+				        let geoCoord = scatterGeo[data[i].name];
+				        if(geoCoord) {
+				            res.push({
+				                name: data[i].name,
+				                value: geoCoord.concat(data[i].value)
+				            });
+				        }
+				    }
+				    return res;
+				};
+				//地图配置项
+				const sactterMapOpt = {
+					title: {
+						text: '各学校分布图',
+						x: 'center',
+						textStyle: {
+							color: '#fff'
+						}
+					},
+					legend: {
+						data: ['各校名单'], //与series的name属性对应
+				        orient: 'vertical',
+				        y: 'bottom',
+				        x: 'right',
+				        textStyle: {
+				            color: '#fff'
+				        }
+				    },
+					tooltip: {
+				        trigger: 'item',
+				        formatter: function(params) {
+				            return params.name + ' : ' + params.value[2];
+				        }
+				    },
+					geo: {
+				        map: 'china',
+				        roam: false, //开启鼠标缩放和漫游
+				        zoom: 1, //地图缩放级别
+						selectedMode: false, //选中模式：single | multiple
+						left: 0,
+						right: 0,
+						top: 0,
+						bottom: 0,
+						layoutCenter: ['50%', '50%'], //设置后left/right/top/bottom等属性无效
+						layoutSize: '100%',
+				        label: {
+				            emphasis: {
+				                show: false
+				            }
+				        },
+				        itemStyle: {
+				            normal: {
+				                areaColor: '#101f32',
+				                borderWidth: 1.1,
+				                borderColor: '#43d0d6'
+				            },
+				            emphasis: {
+				                areaColor: '#069'
+				            }
+				        }
+				    },
+				    series: [{
+			            name: 'PM2.5',
+			            type: 'scatter',
+			            coordinateSystem: 'geo',
+			            symbolSize: 12,
+			            label: {
+			                normal: {
+			                    show: false
+			                },
+			                emphasis: {
+			                    show: false
+			                }
+			            },
+			            itemStyle: {
+			                emphasis: {
+			                    borderColor: '#fff',
+			                    borderWidth: 1
+			                }
+			            },
+			            data: convertScatterData(scatterVal)
+			        }]
+				};
+				//渲染报表
+				scatterMap.setOption(sactterMapOpt);
+				
+				/******************* 世界地图 ******************/
+				//初始化echarts实例
+				const worldMap = echarts.init(document.getElementById("worldMap"));
+				const worldMapOpt = {
+					geo: {
+						map: 'world',
+				        roam: false, //开启鼠标缩放和漫游
+				        zoom: 1, //地图缩放级别
+						selectedMode: false, //选中模式：single | multiple
+						left: 0,
+						right: 0,
+						top: 0,
+						bottom: 0,
+						layoutCenter: ['50%', '50%'], //设置后left/right/top/bottom等属性无效
+						layoutSize: '100%',
+				        label: {
+				            emphasis: {
+				                show: false
+				            }
+				        },
+				        itemStyle: {
+				            normal: {
+				                areaColor: '#101f32',
+				                borderWidth: 1.1,
+				                borderColor: '#43d0d6'
+				            },
+				            emphasis: {
+				                areaColor: '#069'
+				            }
+				        }
+					}
+				};
+				worldMap.setOption(worldMapOpt);
+
+				/********** 浏览器窗口改变时，重置报表大小 ****************/
+				window.onresize = function() {
+					flyMap.resize();
+					scatterMap.resize();
+					worldMap.resize();
+					provinceMap.resize();
+					cityMap.resize();
+					countyMap.resize();
+				}
+			});
+		</script>
+	</body>
+</html>
